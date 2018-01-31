@@ -1,10 +1,9 @@
+package Flink;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.tuple.Tuple2;
-import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 /*
  * To change this license header, choose License Headers in Project Properties.

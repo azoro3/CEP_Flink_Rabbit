@@ -1,15 +1,17 @@
+package RabbitMQ;
 
+
+import Flink.FlinkWork;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class Receiver {
 
     private final static String QUEUE_NAME = "hello";
     static String MESSAGE = "";
+    static FlinkWork FW = new FlinkWork();
 
     public static String receive(String host, int port)
             throws java.io.IOException,
@@ -23,7 +25,6 @@ public class Receiver {
 
         channel.queueDeclare(QUEUE_NAME, false, false, false, null);
         Consumer consumer = new DefaultConsumer(channel) {
-            String msg;
 
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope,
@@ -31,7 +32,7 @@ public class Receiver {
                     throws IOException {
                 String message = new String(body, "UTF-8");
                 System.out.printf("Received '%s' on port %d \n", message, factory.getPort());
-                //TODO récupérer tout le message pour pouvoir le retourner
+                FW.wordCount(message);
             }
         };
         System.out.println(MESSAGE);

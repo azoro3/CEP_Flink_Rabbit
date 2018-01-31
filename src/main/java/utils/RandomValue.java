@@ -1,3 +1,5 @@
+package utils;
+
 public class RandomValue {
     private int value;
 
