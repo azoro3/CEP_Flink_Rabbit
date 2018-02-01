@@ -1,6 +1,7 @@
 # Description and requirement
 Simple wordCount with rabbitMQ and Flink
 * Docker : https://www.docker.com/
+* Docker compose :https://docs.docker.com/compose/
 * Java 8 : https://www.java.com/fr/
 * Apache Flink : https://flink.apache.org/
 * RabbitMQ : https://www.rabbitmq.com/
