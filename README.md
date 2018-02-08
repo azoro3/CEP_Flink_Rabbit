@@ -18,4 +18,8 @@ Simple wordCount with rabbitMQ and Flink
 * **_docker start rabbit-1 rabbit-2 rabbit-3 flink_local_**
 * Wait for eveything to start
 * Launch java main
-
+## Known issues
+* Docker not detected as a command :
+    * Check that docker is running
+    * Check your path if there is :
+    
