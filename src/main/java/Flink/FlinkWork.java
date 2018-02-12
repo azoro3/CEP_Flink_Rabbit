@@ -1,13 +1,7 @@
 package Flink;
 
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.cep.CEP;
-import org.apache.flink.cep.PatternSelectFunction;
 import org.apache.flink.cep.PatternStream;
 import org.apache.flink.cep.pattern.Pattern;
 import org.apache.flink.cep.pattern.conditions.SimpleCondition;
@@ -17,6 +11,7 @@ import org.apache.flink.streaming.connectors.rabbitmq.RMQSource;
 import org.apache.flink.streaming.connectors.rabbitmq.common.RMQConnectionConfig;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 import org.apache.flink.util.Collector;
+import utils.RandomValue;
 
 /**
  *
@@ -24,13 +19,17 @@ import org.apache.flink.util.Collector;
  */
 public class FlinkWork {
 
+    private static final String HOST = "localhost";
+    private static final int[] PORTS = {5672, 5673, 5674};
+    private static final RandomValue RD = new RandomValue();
+
     public static void wordCount() throws Exception {
         /**
          * RabbitMQ connection
          */
         final RMQConnectionConfig connectionConfig = new RMQConnectionConfig.Builder()
-                .setHost("localhost")
-                .setPort(5672)
+                .setHost(HOST)
+                .setPort(PORTS[RD.getValue()])
                 .setUserName("guest")
                 .setPassword("guest")
                 .setVirtualHost("/")
