@@ -6,6 +6,8 @@ import com.rabbitmq.client.*;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Receiver {
 
@@ -32,7 +34,11 @@ public class Receiver {
                     throws IOException {
                 String message = new String(body, "UTF-8");
                 System.out.printf("Received '%s' on port %d \n", message, factory.getPort());
-                FlinkWork.wordCount();
+                try {
+                    FlinkWork.wordCount();
+                } catch (Exception ex) {
+                    Logger.getLogger(Receiver.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         };
         System.out.println(MESSAGE);

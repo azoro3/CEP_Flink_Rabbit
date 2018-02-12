@@ -1,3 +1,5 @@
+package Flink;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -11,6 +13,10 @@
 public class Alert {
     private String idClient;
 
+    Alert(String idClient) {
+        this.idClient=idClient;
+    }
+
     public String getIdClient() {
         return idClient;
     }
@@ -18,6 +24,7 @@ public class Alert {
     public void setIdClient(String idClient) {
         this.idClient = idClient;
     }
+    public Alert(){};
     
     
 }
