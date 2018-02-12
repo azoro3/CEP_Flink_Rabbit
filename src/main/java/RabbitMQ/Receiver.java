@@ -32,7 +32,7 @@ public class Receiver {
                     throws IOException {
                 String message = new String(body, "UTF-8");
                 System.out.printf("Received '%s' on port %d \n", message, factory.getPort());
-                FW.wordCount(message);
+                FlinkWork.wordCount();
             }
         };
         System.out.println(MESSAGE);

@@ -1,38 +1,63 @@
 package Flink;
 
-
-import org.apache.flink.api.java.DataSet;
-import org.apache.flink.api.java.ExecutionEnvironment;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.connectors.rabbitmq.RMQSource;
+import org.apache.flink.streaming.connectors.rabbitmq.common.RMQConnectionConfig;
+import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
+import org.apache.flink.util.Collector;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
  *
  * @author Arthur
  */
 public class FlinkWork {
 
-    public void wordCount(String data) {
-        final ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-        // get input data
-        DataSet<String> text = env.fromElements(data);
+    public static void wordCount() {
+        final RMQConnectionConfig connectionConfig = new RMQConnectionConfig.Builder()
+                .setHost("localhost")
+                .setPort(5672)
+                .setUserName("guest")
+                .setPassword("guest")
+                .setVirtualHost("/")
+                .build();
 
-        DataSet<Tuple2<String, Integer>> counts
-                = // split up the lines in pairs (2-tuples) containing: (word,1)
-                text.flatMap(new ComaSpliter())
-                        // group by the tuple field "0" and sum up tuple field "1"
-                        .groupBy(0)
-                        .sum(1);
-
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        final DataStream<String> stream = env
+                .addSource(new RMQSource<>(
+                        connectionConfig, // config for the RabbitMQ connection
+                        "hello", // name of the RabbitMQ queue to consume
+                        true, // use correlation ids; can be false if only at-least-once is required
+                        new SimpleStringSchema())) // deserialization schema to turn messages into Java objects
+                .setParallelism(1);
+        DataStream<MonitoringEvent> ds = stream.flatMap(new Tokenizer());
         try {
-            // execute and print result
-            counts.print();
+            env.execute();
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+            Logger.getLogger(FlinkWork.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+/**
+ * Inner class
+ */
+    public static final class Tokenizer implements FlatMapFunction<String, MonitoringEvent> {
+/**
+ * 
+ * @param value String in output
+ * @param out MonitoringEvent
+ */
+        @Override
+        public void flatMap(String value, Collector<MonitoringEvent> out) {
+            // normalize and split the line
+            String[] tokens = value.toLowerCase().split(",");
+            MonitoringEvent me = new MonitoringEvent();
+            me.setIdClient(tokens[0]);
+            me.setAncienneChute(tokens[1]);
+            out.collect(me);
         }
     }
 }
