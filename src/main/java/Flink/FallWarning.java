@@ -15,6 +15,10 @@ import java.util.Objects;
 public class FallWarning {
     public String idClient;
     public int idNiveauUrgence;
+    
+    public boolean chaiseRoulante;
+    public boolean fracture;
+    public boolean deambulateur;
 
     public FallWarning(String idClient, int idNiveauUrgence) {
         this.idClient = idClient;
@@ -36,27 +40,75 @@ public class FallWarning {
     public void setIdNiveauUrgence(int idNiveauUrgence) {
         this.idNiveauUrgence = idNiveauUrgence;
     }
+    
+    
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof FallWarning)) return false;
-        FallWarning that = (FallWarning) o;
-        return idNiveauUrgence == that.idNiveauUrgence &&
-                Objects.equals(idClient, that.idClient);
-    }
+    public boolean isChaiseRoulante() {
+		return chaiseRoulante;
+	}
 
-    @Override
-    public int hashCode() {
+	public void setChaiseRoulante(boolean chaiseRoulante) {
+		this.chaiseRoulante = chaiseRoulante;
+	}
 
-        return Objects.hash(idClient, idNiveauUrgence);
-    }
+	public boolean isFracture() {
+		return fracture;
+	}
 
-    @Override
-    public String toString() {
-        return "FallWarning{" +
-                "idClient='" + idClient + '\'' +
-                ", idNiveauUrgence=" + idNiveauUrgence +
-                '}';
-    }
+	public void setFracture(boolean fracture) {
+		this.fracture = fracture;
+	}
+
+	public boolean isDeambulateur() {
+		return deambulateur;
+	}
+
+	public void setDeambulateur(boolean deambulateur) {
+		this.deambulateur = deambulateur;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (chaiseRoulante ? 1231 : 1237);
+		result = prime * result + (deambulateur ? 1231 : 1237);
+		result = prime * result + (fracture ? 1231 : 1237);
+		result = prime * result + ((idClient == null) ? 0 : idClient.hashCode());
+		result = prime * result + idNiveauUrgence;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FallWarning other = (FallWarning) obj;
+		if (chaiseRoulante != other.chaiseRoulante)
+			return false;
+		if (deambulateur != other.deambulateur)
+			return false;
+		if (fracture != other.fracture)
+			return false;
+		if (idClient == null) {
+			if (other.idClient != null)
+				return false;
+		} else if (!idClient.equals(other.idClient))
+			return false;
+		if (idNiveauUrgence != other.idNiveauUrgence)
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "FallWarning [idClient=" + idClient + ", idNiveauUrgence=" + idNiveauUrgence + ", chaiseRoulante="
+				+ chaiseRoulante + ", fracture=" + fracture + ", deambulateur=" + deambulateur + "]";
+	}
+
+	
 }

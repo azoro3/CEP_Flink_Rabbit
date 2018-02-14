@@ -20,6 +20,16 @@ import java.util.Map;
  *
  * @author Arthur
  */
+
+/*
+ * chaise roulante
+ * fracture
+ * déambulateur
+ * 
+ * -- pas sur série temporelles / type de la chute / niveau
+ * check apres midi
+ * 2 chutes de type 3 en 12 mois
+ */
 public class FlinkWork {
 
     private static final String HOST = "localhost";
@@ -67,7 +77,7 @@ public class FlinkWork {
 
                     @Override
                     public boolean filter(MonitoringEvent value, Context<MonitoringEvent> ctx) throws Exception {
-                        return Integer.parseInt(value.getAncienneChute())>=CHUTE_GRAVE;
+                        return Integer.parseInt(value.getAncienneChute())>=CHUTE_GRAVE && value.;
                     }
                 });
 
@@ -130,6 +140,10 @@ public class FlinkWork {
             MonitoringEvent me = new MonitoringEvent();
             me.setIdClient(tokens[0]);
             me.setAncienneChute(tokens[1]);
+            me.setChaiseRoulante(Boolean.parseBoolean(tokens[2]));
+            me.setFracture(Boolean.parseBoolean(tokens[3]));
+            me.setDeambulateur(Boolean.parseBoolean(tokens[4]));
+            
             out.collect(me);
         }
     }

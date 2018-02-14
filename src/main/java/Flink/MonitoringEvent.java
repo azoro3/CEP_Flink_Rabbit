@@ -16,6 +16,10 @@ public class MonitoringEvent {
 
     private String idClient;
     private String ancienneChute;
+    
+    private boolean chaiseRoulante;
+    private boolean fracture;
+    private boolean deambulateur;
 
     public MonitoringEvent() {}
 
@@ -39,23 +43,77 @@ public class MonitoringEvent {
     public void setAncienneChute(String ancienneChute) {
         this.ancienneChute = ancienneChute;
     }
-    @Override
-    public String toString(){
-        return "("+this.idClient+","+this.ancienneChute+")";
-    }
+    
+    public boolean isChaiseRoulante() {
+		return chaiseRoulante;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MonitoringEvent)) return false;
-        MonitoringEvent that = (MonitoringEvent) o;
-        return Objects.equals(idClient, that.idClient) &&
-                Objects.equals(ancienneChute, that.ancienneChute);
-    }
+	public void setChaiseRoulante(boolean chaiseRoulante) {
+		this.chaiseRoulante = chaiseRoulante;
+	}
 
-    @Override
-    public int hashCode() {
+	public boolean isFracture() {
+		return fracture;
+	}
 
-        return Objects.hash(idClient, ancienneChute);
-    }
+	public void setFracture(boolean fracture) {
+		this.fracture = fracture;
+	}
+
+	public boolean isDeambulateur() {
+		return deambulateur;
+	}
+
+	public void setDeambulateur(boolean deambulateur) {
+		this.deambulateur = deambulateur;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((ancienneChute == null) ? 0 : ancienneChute.hashCode());
+		result = prime * result + (chaiseRoulante ? 1231 : 1237);
+		result = prime * result + (deambulateur ? 1231 : 1237);
+		result = prime * result + (fracture ? 1231 : 1237);
+		result = prime * result + ((idClient == null) ? 0 : idClient.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MonitoringEvent other = (MonitoringEvent) obj;
+		if (ancienneChute == null) {
+			if (other.ancienneChute != null)
+				return false;
+		} else if (!ancienneChute.equals(other.ancienneChute))
+			return false;
+		if (chaiseRoulante != other.chaiseRoulante)
+			return false;
+		if (deambulateur != other.deambulateur)
+			return false;
+		if (fracture != other.fracture)
+			return false;
+		if (idClient == null) {
+			if (other.idClient != null)
+				return false;
+		} else if (!idClient.equals(other.idClient))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "MonitoringEvent [idClient=" + idClient + ", ancienneChute=" + ancienneChute + ", chaiseRoulante="
+				+ chaiseRoulante + ", fracture=" + fracture + ", deambulateur=" + deambulateur + "]";
+	}
+
+	
+   
 }
