@@ -1,5 +1,6 @@
 package Flink;
 
+import DB.EntityManager;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.cep.CEP;
 import org.apache.flink.cep.PatternStream;
@@ -92,6 +93,12 @@ public class FlinkWork {
             		@Override
             		public boolean filter(MonitoringEvent value) {
                 		return value.isDeambulateur();
+                }
+				})
+                .or(new SimpleCondition<MonitoringEvent>() {
+            		@Override
+            		public boolean filter(MonitoringEvent value) {
+                		return EntityManager.getInstance().hasCurrentYearFallTwice(value.getIdClient());
                 }
 				});
                 /*.where(new IterativeCondition<MonitoringEvent>() {
