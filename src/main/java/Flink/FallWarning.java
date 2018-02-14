@@ -12,6 +12,10 @@ package Flink;
  */
 public class FallWarning {
     public String idClient;
-    
-    
+    public int idNiveauUrgence;
+
+    public FallWarning(String idClient, int idNiveauUrgence) {
+        this.idClient = idClient;
+        this.idNiveauUrgence = idNiveauUrgence;
+    }
 }

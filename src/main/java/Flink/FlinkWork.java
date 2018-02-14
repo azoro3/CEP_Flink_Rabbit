@@ -2,16 +2,22 @@ package Flink;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.cep.CEP;
+import org.apache.flink.cep.PatternSelectFunction;
 import org.apache.flink.cep.PatternStream;
 import org.apache.flink.cep.pattern.Pattern;
+import org.apache.flink.cep.pattern.conditions.IterativeCondition;
 import org.apache.flink.cep.pattern.conditions.SimpleCondition;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.connectors.rabbitmq.RMQSource;
 import org.apache.flink.streaming.connectors.rabbitmq.common.RMQConnectionConfig;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 import org.apache.flink.util.Collector;
 import utils.RandomValue;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -22,6 +28,8 @@ public class FlinkWork {
     private static final String HOST = "localhost";
     private static final int[] PORTS = {5672, 5673, 5674};
     private static final RandomValue RD = new RandomValue();
+
+    private static final double CHUTE_GRAVE = 3;
 
     public static void wordCount() throws Exception {
         /**
@@ -37,9 +45,9 @@ public class FlinkWork {
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         /**
-         * Retrieve data stream from rabbitMQ
+         * Retrieve data inputEventstream from rabbitMQ
          */
-        final DataStream<String> stream = env
+        final DataStream<String> inputEventstream = env
                 .addSource(new RMQSource<>(
                         connectionConfig, // config for the RabbitMQ connection
                         "hello", // name of the RabbitMQ queue to consume
@@ -50,16 +58,58 @@ public class FlinkWork {
          * Change DataStream<String> to DataStream<MonitoringEvent> where
          * MonitoringEvent refer to a class which modelize our event.
          */
-        DataStream<MonitoringEvent> ds = stream.flatMap(new Tokenizer());
+        DataStream<MonitoringEvent> inputEventStreamClean = inputEventstream.flatMap(new Tokenizer());
+
         Pattern<MonitoringEvent, ?> warningPattern = Pattern.<MonitoringEvent>begin("start")
-                .where(new SimpleCondition<MonitoringEvent>() {
+                .subtype(MonitoringEvent.class)
+                .where(new IterativeCondition<MonitoringEvent>() {
+                    private static final long serialVersionUID = -6301755149429716724L;
+
                     @Override
-                    public boolean filter(MonitoringEvent evt) {
-                        return evt.getIdClient().equals("C12");
+                    public boolean filter(MonitoringEvent value, Context<MonitoringEvent> ctx) throws Exception {
+                        return Integer.parseInt(value.getAncienneChute())>=CHUTE_GRAVE;
                     }
                 });
-        PatternStream<MonitoringEvent> fallPatternStream = CEP.pattern(ds, warningPattern);
-        ds.print();
+
+        //PatternStream<MonitoringEvent> fallPatternStream = CEP.pattern(inputEventStreamClean.keyBy("idClient"), warningPattern);
+        inputEventStreamClean.print();
+
+        // Create a pattern stream from our warning pattern
+        PatternStream<MonitoringEvent> tempPatternStream = CEP.pattern(
+                inputEventStreamClean.keyBy("idClient"),
+                warningPattern);
+
+        DataStream<FallWarning> warnings = tempPatternStream.select(
+                (Map<String, List<MonitoringEvent>> pattern) -> {
+                    MonitoringEvent first = (MonitoringEvent) pattern.get("start").get(0);
+
+                    return new FallWarning(first.getIdClient(), Integer.parseInt(first.getAncienneChute()));
+                }
+        );
+
+        // Alert pattern: Two consecutive temperature warnings appearing within a time interval of 20 seconds
+        Pattern<FallWarning, ?> alertPattern = Pattern.<FallWarning>begin("start");
+
+        // Create a pattern stream from our alert pattern
+        PatternStream<FallWarning> alertPatternStream = CEP.pattern(
+                warnings.keyBy("idClient"),
+                alertPattern);
+
+        // Generate a temperature alert only iff the second temperature warning's average temperature is higher than
+        // first warning's temperature
+        DataStream<Alert> alerts = alertPatternStream.flatSelect(
+                (Map<String, List<FallWarning>> pattern, Collector<Alert> out) -> {
+                    FallWarning first = pattern.get("start").get(0);
+
+                    if (first.idNiveauUrgence>=CHUTE_GRAVE) {
+                        out.collect(new Alert(first.idClient));
+                    }
+                });
+
+        // Print the warning and alert events to stdout
+        warnings.print();
+        alerts.print();
+
         env.execute();
     }
 

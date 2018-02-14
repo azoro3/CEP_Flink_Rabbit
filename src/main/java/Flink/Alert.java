@@ -24,7 +24,7 @@ public class Alert {
     public void setIdClient(String idClient) {
         this.idClient = idClient;
     }
-    public Alert(){};
+    public Alert(){}
     
     
 }
