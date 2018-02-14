@@ -77,7 +77,7 @@ public class FlinkWork {
 
                     @Override
                     public boolean filter(MonitoringEvent value, Context<MonitoringEvent> ctx) throws Exception {
-                        return Integer.parseInt(value.getAncienneChute())>=CHUTE_GRAVE && value.;
+                        return Integer.parseInt(value.getAncienneChute())>=CHUTE_GRAVE && (value.isChaiseRoulante() || value.isDeambulateur() || value.isFracture());
                     }
                 });
 
@@ -111,7 +111,7 @@ public class FlinkWork {
                 (Map<String, List<FallWarning>> pattern, Collector<Alert> out) -> {
                     FallWarning first = pattern.get("start").get(0);
 
-                    if (first.idNiveauUrgence>=CHUTE_GRAVE) {
+                    if (first.idNiveauUrgence>=CHUTE_GRAVE && (first.isChaiseRoulante() || first.isDeambulateur() || first.isFracture())) {
                         out.collect(new Alert(first.idClient));
                     }
                 });
