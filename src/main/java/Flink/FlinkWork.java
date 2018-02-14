@@ -2,14 +2,11 @@ package Flink;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.cep.CEP;
-import org.apache.flink.cep.PatternSelectFunction;
 import org.apache.flink.cep.PatternStream;
 import org.apache.flink.cep.pattern.Pattern;
 import org.apache.flink.cep.pattern.conditions.IterativeCondition;
-import org.apache.flink.cep.pattern.conditions.SimpleCondition;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.connectors.rabbitmq.RMQSource;
 import org.apache.flink.streaming.connectors.rabbitmq.common.RMQConnectionConfig;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
@@ -30,6 +27,9 @@ public class FlinkWork {
     private static final RandomValue RD = new RandomValue();
 
     private static final double CHUTE_GRAVE = 3;
+
+    public FlinkWork() {
+    }
 
     public static void wordCount() throws Exception {
         /**
@@ -82,8 +82,7 @@ public class FlinkWork {
         DataStream<FallWarning> warnings = tempPatternStream.select(
                 (Map<String, List<MonitoringEvent>> pattern) -> {
                     MonitoringEvent first = (MonitoringEvent) pattern.get("start").get(0);
-
-                    return new FallWarning(first.getIdClient(), Integer.parseInt(first.getAncienneChute()));
+                    return new FallWarning(first.getIdClient(), Integer.valueOf(first.getAncienneChute()));
                 }
         );
 
@@ -92,7 +91,8 @@ public class FlinkWork {
 
         // Create a pattern stream from our alert pattern
         PatternStream<FallWarning> alertPatternStream = CEP.pattern(
-                warnings.keyBy("idClient"),
+                //warnings.keyBy("idClient"),
+        		    warnings,
                 alertPattern);
 
         // Generate a temperature alert only iff the second temperature warning's average temperature is higher than

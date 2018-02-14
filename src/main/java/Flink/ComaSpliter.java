@@ -8,6 +8,9 @@ import org.apache.flink.util.Collector;
 
 public final class ComaSpliter implements FlatMapFunction<String, Tuple2<String, Integer>> {
 
+    public ComaSpliter() {
+    }
+
     @Override
     public void flatMap(String value, Collector<Tuple2<String, Integer>> out) {
         // normalize and split the line

@@ -25,6 +25,8 @@ public class NewMain {
     public static void main(String[] args) throws IOException, TimeoutException {
         Sender.send("C5,3", HOST, PORTS[RD.getValue()]);
         Sender.send("C22,3", HOST, PORTS[RD.getValue()]);
+        Sender.send("C23,1", HOST, PORTS[RD.getValue()]);
+
     }
 
 }
