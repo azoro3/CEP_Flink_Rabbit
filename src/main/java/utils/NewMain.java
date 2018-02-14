@@ -23,15 +23,10 @@ public class NewMain {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException, TimeoutException {
-        /*Sender.send("C5,3", HOST, PORTS[RD.getValue()]);
-        Sender.send("C22,3", HOST, PORTS[RD.getValue()]);
-        Sender.send("C23,1", HOST, PORTS[RD.getValue()]);*/
-    	
-    		Sender.send("C5,3, true, false, true", HOST, PORTS[RD.getValue()]);
-        Sender.send("C22,3, true, true, true", HOST, PORTS[RD.getValue()]);
-        Sender.send("C23,1, false, false, false", HOST, PORTS[RD.getValue()]);
-        
-        
+      
+    		Sender.send("C5,3,true,false,true", HOST, PORTS[RD.getValue()]);
+        Sender.send("C22,3,true,true,true", HOST, PORTS[RD.getValue()]);
+        Sender.send("C23,1,false,false,false", HOST, PORTS[RD.getValue()]);
 
     }
 

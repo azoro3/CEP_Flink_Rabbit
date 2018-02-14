@@ -5,6 +5,7 @@ import org.apache.flink.cep.CEP;
 import org.apache.flink.cep.PatternStream;
 import org.apache.flink.cep.pattern.Pattern;
 import org.apache.flink.cep.pattern.conditions.IterativeCondition;
+import org.apache.flink.cep.pattern.conditions.SimpleCondition;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.rabbitmq.RMQSource;
@@ -72,14 +73,35 @@ public class FlinkWork {
 
         Pattern<MonitoringEvent, ?> warningPattern = Pattern.<MonitoringEvent>begin("start")
                 .subtype(MonitoringEvent.class)
-                .where(new IterativeCondition<MonitoringEvent>() {
+                .where(new SimpleCondition<MonitoringEvent>() {
+                    @Override
+                    public boolean filter(MonitoringEvent value) {
+                    		return Integer.parseInt(value.getAncienneChute())>=CHUTE_GRAVE;
+                    }
+                }).or(new SimpleCondition<MonitoringEvent>() {
+                    @Override
+                    public boolean filter(MonitoringEvent value) {
+                    		return value.isChaiseRoulante();
+                    }
+                }).or(new SimpleCondition<MonitoringEvent>() {
+                		@Override
+                		public boolean filter(MonitoringEvent value) {
+                    		return value.isDeambulateur();
+                    }
+				}).or(new SimpleCondition<MonitoringEvent>() {
+            		@Override
+            		public boolean filter(MonitoringEvent value) {
+                		return value.isDeambulateur();
+                }
+				});
+                /*.where(new IterativeCondition<MonitoringEvent>() {
                     private static final long serialVersionUID = -6301755149429716724L;
 
                     @Override
                     public boolean filter(MonitoringEvent value, Context<MonitoringEvent> ctx) throws Exception {
                         return Integer.parseInt(value.getAncienneChute())>=CHUTE_GRAVE && (value.isChaiseRoulante() || value.isDeambulateur() || value.isFracture());
                     }
-                });
+                });*/
 
         //PatternStream<MonitoringEvent> fallPatternStream = CEP.pattern(inputEventStreamClean.keyBy("idClient"), warningPattern);
         inputEventStreamClean.print();
@@ -140,10 +162,13 @@ public class FlinkWork {
             MonitoringEvent me = new MonitoringEvent();
             me.setIdClient(tokens[0]);
             me.setAncienneChute(tokens[1]);
-            me.setChaiseRoulante(Boolean.parseBoolean(tokens[2]));
-            me.setFracture(Boolean.parseBoolean(tokens[3]));
-            me.setDeambulateur(Boolean.parseBoolean(tokens[4]));
-            
+
+            System.out.println(tokens[2] + " "+  tokens[3] + " " + tokens[4]);
+
+            me.setChaiseRoulante(Boolean.valueOf(tokens[2]));
+            me.setFracture(Boolean.valueOf(tokens[3]));
+            me.setDeambulateur(Boolean.valueOf(tokens[4]));
+
             out.collect(me);
         }
     }
