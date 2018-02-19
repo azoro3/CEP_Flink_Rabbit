@@ -24,9 +24,9 @@ public class NewMain {
      */
     public static void main(String[] args) throws IOException, TimeoutException {
       
-    		Sender.send("10Chambre111,3,true,false,true", HOST, PORTS[RD.getValue()]);
-        Sender.send("9Chambre315,3,true,true,true", HOST, PORTS[RD.getValue()]);
-        Sender.send("18Chambre101,1,false,false,false", HOST, PORTS[RD.getValue()]);
+    		Sender.send("10Chambre111,3,true,false,true", HOST, PORTS[RD.getValue()],"input");
+        Sender.send("9Chambre315,3,true,true,true", HOST, PORTS[RD.getValue()],"input");
+        Sender.send("18Chambre101,1,false,false,false", HOST, PORTS[RD.getValue()],"input");
 
     }
 

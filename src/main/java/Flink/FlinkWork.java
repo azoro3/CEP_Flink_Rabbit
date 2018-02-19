@@ -62,7 +62,7 @@ public class FlinkWork {
         final DataStream<String> inputEventstream = env
                 .addSource(new RMQSource<>(
                         connectionConfig, // config for the RabbitMQ connection
-                        "hello", // name of the RabbitMQ queue to consume
+                        "input", // name of the RabbitMQ queue to consume
                         true, // use correlation ids; can be false if only at-least-once is required
                         new SimpleStringSchema())) // deserialization schema to turn messages into Java objects
                 .setParallelism(1);
