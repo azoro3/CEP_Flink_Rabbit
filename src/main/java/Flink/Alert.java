@@ -12,19 +12,30 @@ package Flink;
  */
 public class Alert {
     private String idClient;
-
-    Alert(String idClient) {
-        this.idClient=idClient;
-    }
-
-    public String getIdClient() {
-        return idClient;
-    }
-
-    public void setIdClient(String idClient) {
-        this.idClient = idClient;
-    }
-    public Alert(){}
+    private Integer identifiant;
     
-    
+	public Alert() {
+	}
+
+	public Alert(String idClient, Integer identifiant) {
+		this.idClient = idClient;
+		this.identifiant = identifiant;
+	}
+	
+	public String getIdClient() {
+		return idClient;
+	}
+	
+	public void setIdClient(String idClient) {
+		this.idClient = idClient;
+	}
+	
+	public Integer getIdentifiant() {
+		return identifiant;
+	}
+	
+	public void setIdentifiant(Integer identifiant) {
+		this.identifiant = identifiant;
+	}
+        
 }

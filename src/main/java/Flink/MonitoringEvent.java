@@ -20,12 +20,15 @@ public class MonitoringEvent {
     private boolean chaiseRoulante;
     private boolean fracture;
     private boolean deambulateur;
+    private Integer identifiantAlert;
+    
 
     public MonitoringEvent() {}
 
-    public MonitoringEvent(String idClient, String ancienneChute) {
+    public MonitoringEvent(String idClient, String ancienneChute, Integer identifiantAlert) {
         this.idClient = idClient;
         this.ancienneChute = ancienneChute;
+        this.identifiantAlert = identifiantAlert;
     }
 
     public String getIdClient() {
@@ -67,6 +70,14 @@ public class MonitoringEvent {
 	public void setDeambulateur(boolean deambulateur) {
 		this.deambulateur = deambulateur;
 	}
+	
+	public Integer getIdentifiantAlert() {
+		return identifiantAlert;
+	}
+
+	public void setIdentifiantAlert(Integer identifiantAlert) {
+		this.identifiantAlert = identifiantAlert;
+	}
 
 	@Override
 	public int hashCode() {
@@ -77,6 +88,7 @@ public class MonitoringEvent {
 		result = prime * result + (deambulateur ? 1231 : 1237);
 		result = prime * result + (fracture ? 1231 : 1237);
 		result = prime * result + ((idClient == null) ? 0 : idClient.hashCode());
+		result = prime * result + ((identifiantAlert == null) ? 0 : identifiantAlert.hashCode());
 		return result;
 	}
 
@@ -105,15 +117,19 @@ public class MonitoringEvent {
 				return false;
 		} else if (!idClient.equals(other.idClient))
 			return false;
+		if (identifiantAlert == null) {
+			if (other.identifiantAlert != null)
+				return false;
+		} else if (!identifiantAlert.equals(other.identifiantAlert))
+			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
 		return "MonitoringEvent [idClient=" + idClient + ", ancienneChute=" + ancienneChute + ", chaiseRoulante="
-				+ chaiseRoulante + ", fracture=" + fracture + ", deambulateur=" + deambulateur + "]";
+				+ chaiseRoulante + ", fracture=" + fracture + ", deambulateur=" + deambulateur + ", identifiantAlert="
+				+ identifiantAlert + "]";
 	}
-
-	
    
 }

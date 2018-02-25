@@ -19,13 +19,17 @@ public class FallWarning {
     public boolean chaiseRoulante;
     public boolean fracture;
     public boolean deambulateur;
+    public Integer identifiantAlert;
 
-    public FallWarning(String idClient, int idNiveauUrgence) {
-        this.idClient = idClient;
-        this.idNiveauUrgence = idNiveauUrgence;
-    }
+    
 
-    public String getIdClient() {
+    public FallWarning(String idClient, int idNiveauUrgence, Integer identifiantAlert) {
+		this.idClient = idClient;
+		this.idNiveauUrgence = idNiveauUrgence;
+		this.identifiantAlert = identifiantAlert;
+	}
+
+	public String getIdClient() {
         return idClient;
     }
 
@@ -67,6 +71,14 @@ public class FallWarning {
 		this.deambulateur = deambulateur;
 	}
 
+	public Integer getIdentifiantAlert() {
+		return identifiantAlert;
+	}
+
+	public void setIdentifiantAlert(Integer identifiantAlert) {
+		this.identifiantAlert = identifiantAlert;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -76,6 +88,7 @@ public class FallWarning {
 		result = prime * result + (fracture ? 1231 : 1237);
 		result = prime * result + ((idClient == null) ? 0 : idClient.hashCode());
 		result = prime * result + idNiveauUrgence;
+		result = prime * result + ((identifiantAlert == null) ? 0 : identifiantAlert.hashCode());
 		return result;
 	}
 
@@ -101,14 +114,19 @@ public class FallWarning {
 			return false;
 		if (idNiveauUrgence != other.idNiveauUrgence)
 			return false;
+		if (identifiantAlert == null) {
+			if (other.identifiantAlert != null)
+				return false;
+		} else if (!identifiantAlert.equals(other.identifiantAlert))
+			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
 		return "FallWarning [idClient=" + idClient + ", idNiveauUrgence=" + idNiveauUrgence + ", chaiseRoulante="
-				+ chaiseRoulante + ", fracture=" + fracture + ", deambulateur=" + deambulateur + "]";
+				+ chaiseRoulante + ", fracture=" + fracture + ", deambulateur=" + deambulateur + ", identifiantAlert="
+				+ identifiantAlert + "]";
 	}
-
 	
 }

@@ -122,7 +122,9 @@ public class FlinkWork {
                 (Map<String, List<MonitoringEvent>> pattern) -> {
                     MonitoringEvent first = (MonitoringEvent) pattern.get("start").get(0);
                     
-                    return new FallWarning(first.getIdClient(), Integer.valueOf(first.getAncienneChute()));
+                    return new FallWarning(first.getIdClient(), 
+                    		Integer.valueOf(first.getAncienneChute()), 
+                    		first.getIdentifiantAlert());
                 }
         );
 
@@ -142,7 +144,7 @@ public class FlinkWork {
                     FallWarning first = pattern.get("start").get(0);
 
                     if (first.idNiveauUrgence>=CHUTE_GRAVE && (first.isChaiseRoulante() || first.isDeambulateur() || first.isFracture())) {
-                        out.collect(new Alert(first.idClient));
+                    out.collect(new Alert(first.idClient, first.identifiantAlert));
                     }
                 });
 
@@ -180,7 +182,7 @@ public class FlinkWork {
             
             EventSender eventSender = new EventSender();
             try {
-				eventSender.send(new Alert("10Chambre111"));
+				eventSender.send(new Alert("10Chambre111", 1));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
