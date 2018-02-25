@@ -121,6 +121,7 @@ public class FlinkWork {
         DataStream<FallWarning> warnings = tempPatternStream.select(
                 (Map<String, List<MonitoringEvent>> pattern) -> {
                     MonitoringEvent first = (MonitoringEvent) pattern.get("start").get(0);
+                    
                     return new FallWarning(first.getIdClient(), Integer.valueOf(first.getAncienneChute()));
                 }
         );
@@ -176,6 +177,16 @@ public class FlinkWork {
             me.setFracture(Boolean.valueOf(tokens[3]));
             me.setDeambulateur(Boolean.valueOf(tokens[4]));
 
+            
+            EventSender eventSender = new EventSender();
+            try {
+				eventSender.send(new Alert("10Chambre111"));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}     
+       
+            
             out.collect(me);
         }
     }
