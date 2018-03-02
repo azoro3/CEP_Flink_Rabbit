@@ -32,7 +32,7 @@ import java.util.Map;
  * check apres midi
  * 2 chutes de type 3 en 12 mois
  */
-public class FlinkWork {
+public class FlinkWork2 {
 
     private static final String HOST = "localhost";
     private static final int[] PORTS = {5672, 5673, 5674};
@@ -40,7 +40,7 @@ public class FlinkWork {
 
     private static final double CHUTE_GRAVE = 3;
 
-    public FlinkWork() {
+    public FlinkWork2() {
     }
 
     public static void wordCount() throws Exception {
@@ -62,7 +62,7 @@ public class FlinkWork {
         final DataStream<String> inputEventstream = env
                 .addSource(new RMQSource<>(
                         connectionConfig, // config for the RabbitMQ connection
-                        "input", // name of the RabbitMQ queue to consume
+                        "input2", // name of the RabbitMQ queue to consume
                         true, // use correlation ids; can be false if only at-least-once is required
                         new SimpleStringSchema())) // deserialization schema to turn messages into Java objects
                 .setParallelism(1);
@@ -77,33 +77,9 @@ public class FlinkWork {
                 .where(new SimpleCondition<MonitoringEvent>() {
                     @Override
                     public boolean filter(MonitoringEvent value) {
-                    		return Integer.parseInt(value.getAncienneChute())>=CHUTE_GRAVE;
+                    		return (!(Integer.parseInt(value.getAncienneChute())>=CHUTE_GRAVE)&&(!value.isChaiseRoulante())&&(!value.isDeambulateur())&&(!(EntityManager.getInstance().hasCurrentYearFallTwice(value.getIdClient()))));
                     }
-                }).or(new SimpleCondition<MonitoringEvent>() {
-                    @Override
-                    public boolean filter(MonitoringEvent value) {
-                    		return value.isChaiseRoulante();
-                    }
-                }).or(new SimpleCondition<MonitoringEvent>() {
-                		@Override
-                		public boolean filter(MonitoringEvent value) {
-                    		return value.isDeambulateur();
-                    }
-				})
-                .or(new SimpleCondition<MonitoringEvent>() {
-            		@Override
-            		public boolean filter(MonitoringEvent value) {
-                		return EntityManager.getInstance().hasCurrentYearFallTwice(value.getIdClient());
-                }
-				});
-                /*.where(new IterativeCondition<MonitoringEvent>() {
-                    private static final long serialVersionUID = -6301755149429716724L;
-
-                    @Override
-                    public boolean filter(MonitoringEvent value, Context<MonitoringEvent> ctx) throws Exception {
-                        return Integer.parseInt(value.getAncienneChute())>=CHUTE_GRAVE && (value.isChaiseRoulante() || value.isDeambulateur() || value.isFracture());
-                    }
-                });*/
+                });
 
         //PatternStream<MonitoringEvent> fallPatternStream = CEP.pattern(inputEventStreamClean.keyBy("idClient"), warningPattern);
         inputEventStreamClean.print();
@@ -143,7 +119,8 @@ public class FlinkWork {
 
         // Print the warning and alert events to stdout
         warnings.print();
-        System.out.println("ALERTV1");
+        
+        System.out.println("ALERTV2");
         alerts.print();
 
         env.execute();

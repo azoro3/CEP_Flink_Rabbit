@@ -37,5 +37,12 @@ public class Alert {
 	public void setIdentifiant(Integer identifiant) {
 		this.identifiant = identifiant;
 	}
+
+	@Override
+	public String toString() {
+		return "Alert [idClient=" + idClient + ", identifiant=" + identifiant + "]";
+	}
+	
+	
         
 }
