@@ -114,7 +114,16 @@ public class FlinkWork2 {
                 (Map<String, List<FallWarning>> pattern, Collector<Alert> out) -> {
                     FallWarning first = pattern.get("start").get(0);
 
-                    out.collect(new Alert(first.idClient, first.identifiantAlert));
+                    EventSender eventSender = new EventSender();
+                    Alert alert = new Alert(first.idClient, first.identifiantAlert, false);
+                    try {
+        				eventSender.send(alert);
+        			} catch (Exception e) {
+        				// TODO Auto-generated catch block
+        				e.printStackTrace();
+        			}    
+                    
+                    out.collect(alert);
                 });
 
         // Print the warning and alert events to stdout
@@ -151,16 +160,6 @@ public class FlinkWork2 {
             me.setDeambulateur(Boolean.valueOf(tokens[4]));
             me.setIdentifiantAlert(Integer.parseInt(tokens[5]));
 
-            
-            EventSender eventSender = new EventSender();
-            try {
-				eventSender.send(new Alert(tokens[0], Integer.parseInt(tokens[5])));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}     
-       
-            
             out.collect(me);
         }
     }

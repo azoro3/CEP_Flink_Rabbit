@@ -96,14 +96,7 @@ public class FlinkWork {
                 		return EntityManager.getInstance().hasCurrentYearFallTwice(value.getIdClient());
                 }
 				});
-                /*.where(new IterativeCondition<MonitoringEvent>() {
-                    private static final long serialVersionUID = -6301755149429716724L;
-
-                    @Override
-                    public boolean filter(MonitoringEvent value, Context<MonitoringEvent> ctx) throws Exception {
-                        return Integer.parseInt(value.getAncienneChute())>=CHUTE_GRAVE && (value.isChaiseRoulante() || value.isDeambulateur() || value.isFracture());
-                    }
-                });*/
+                
 
         //PatternStream<MonitoringEvent> fallPatternStream = CEP.pattern(inputEventStreamClean.keyBy("idClient"), warningPattern);
         inputEventStreamClean.print();
@@ -138,7 +131,16 @@ public class FlinkWork {
                 (Map<String, List<FallWarning>> pattern, Collector<Alert> out) -> {
                     FallWarning first = pattern.get("start").get(0);
 
-                    out.collect(new Alert(first.idClient, first.identifiantAlert));
+                    EventSender eventSender = new EventSender();
+                    Alert alert = new Alert(first.idClient, first.identifiantAlert, true);
+                    try {
+        				eventSender.send(alert);
+        			} catch (Exception e) {
+        				// TODO Auto-generated catch block
+        				e.printStackTrace();
+        			}     
+               
+                    out.collect(alert);
                 });
 
         // Print the warning and alert events to stdout
@@ -173,17 +175,7 @@ public class FlinkWork {
             me.setFracture(Boolean.valueOf(tokens[3]));
             me.setDeambulateur(Boolean.valueOf(tokens[4]));
             me.setIdentifiantAlert(Integer.parseInt(tokens[5]));
-
-            
-            EventSender eventSender = new EventSender();
-            try {
-				eventSender.send(new Alert(tokens[0], Integer.parseInt(tokens[5])));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}     
-       
-            
+ 
             out.collect(me);
         }
     }
