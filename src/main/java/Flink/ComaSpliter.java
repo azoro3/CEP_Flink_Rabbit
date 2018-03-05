@@ -5,7 +5,11 @@ import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.util.Collector;
 
-
+/**
+ * 
+ * @author Arthur
+ * class to split data on a single caracter
+ */
 public final class ComaSpliter implements FlatMapFunction<String, Tuple2<String, Integer>> {
 
     public ComaSpliter() {

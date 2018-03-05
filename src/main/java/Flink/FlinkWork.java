@@ -43,7 +43,7 @@ public class FlinkWork {
     public FlinkWork() {
     }
 
-    public static void wordCount() throws Exception {
+    public static void work() throws Exception {
         /**
          * RabbitMQ connection
          */
@@ -71,7 +71,7 @@ public class FlinkWork {
          * MonitoringEvent refer to a class which modelize our event.
          */
         DataStream<MonitoringEvent> inputEventStreamClean = inputEventstream.flatMap(new Tokenizer());
-
+        //Définition des pattern
         Pattern<MonitoringEvent, ?> warningPattern = Pattern.<MonitoringEvent>begin("start")
                 .subtype(MonitoringEvent.class)
                 .where(new SimpleCondition<MonitoringEvent>() {
@@ -116,17 +116,11 @@ public class FlinkWork {
                 }
         );
 
-        // Alert pattern: Two consecutive temperature warnings appearing within a time interval of 20 seconds
         Pattern<FallWarning, ?> alertPattern = Pattern.<FallWarning>begin("start");
 
         // Create a pattern stream from our alert pattern
-        PatternStream<FallWarning> alertPatternStream = CEP.pattern(
-                //warnings.keyBy("idClient"),
-        		    warnings,
-                alertPattern);
-
-        // Generate a temperature alert only iff the second temperature warning's average temperature is higher than
-        // first warning's temperature
+        PatternStream<FallWarning> alertPatternStream = CEP.pattern(warnings,alertPattern);
+        //Application des pattern au datastream
         DataStream<Alert> alerts = alertPatternStream.flatSelect(
                 (Map<String, List<FallWarning>> pattern, Collector<Alert> out) -> {
                     FallWarning first = pattern.get("start").get(0);

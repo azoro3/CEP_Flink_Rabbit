@@ -43,7 +43,7 @@ public class FlinkWork2 {
     public FlinkWork2() {
     }
 
-    public static void wordCount() throws Exception {
+    public static void work() throws Exception {
         /**
          * RabbitMQ connection
          */
@@ -80,8 +80,6 @@ public class FlinkWork2 {
                     		return (!(Integer.parseInt(value.getAncienneChute())>=CHUTE_GRAVE)&&(!value.isChaiseRoulante())&&(!value.isDeambulateur())&&(!(EntityManager.getInstance().hasCurrentYearFallTwice(value.getIdClient()))));
                     }
                 });
-
-        //PatternStream<MonitoringEvent> fallPatternStream = CEP.pattern(inputEventStreamClean.keyBy("idClient"), warningPattern);
         inputEventStreamClean.print();
 
         // Create a pattern stream from our warning pattern
@@ -98,8 +96,6 @@ public class FlinkWork2 {
                     		first.getIdentifiantAlert());
                 }
         );
-
-        // Alert pattern: Two consecutive temperature warnings appearing within a time interval of 20 seconds
         Pattern<FallWarning, ?> alertPattern = Pattern.<FallWarning>begin("start");
 
         // Create a pattern stream from our alert pattern
@@ -107,9 +103,6 @@ public class FlinkWork2 {
                 //warnings.keyBy("idClient"),
         		    warnings,
                 alertPattern);
-
-        // Generate a temperature alert only iff the second temperature warning's average temperature is higher than
-        // first warning's temperature
         DataStream<Alert> alerts = alertPatternStream.flatSelect(
                 (Map<String, List<FallWarning>> pattern, Collector<Alert> out) -> {
                     FallWarning first = pattern.get("start").get(0);

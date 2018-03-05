@@ -5,7 +5,11 @@ import com.google.gson.GsonBuilder;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-
+/**
+ * 
+ * @author Arthur
+ * Envoi d'un évènement après traitement dans le CEP pour affectation
+ */
 public class EventSender {
 	
 	//Etablir la connexion ou la getter
