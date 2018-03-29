@@ -46,7 +46,7 @@ public class NewMainDB {
             System.out.println("Creating statement...");
             stmt = connection.createStatement();
             String sql;
-            sql = "SELECT emplacement, idclient, round(random() * 2 + 1) as ancienne_chute, random() > 0.5 as chaise_roulante, random() > 0.5 as fracture, random() > 0.5 as deambulateur,idevent FROM event_assistance;";
+            sql = "SELECT emplacement, idclient, round(random() * 2 + 1) as ancienne_chute, random() > 0.5 as chaise_roulante, random() > 0.5 as fracture, random() > 0.5 as deambulateur,idevent FROM event_assistance LIMIT 500;";
             ResultSet rs = stmt.executeQuery(sql);
 
             //STEP 5: Extract data from result set
@@ -62,7 +62,8 @@ public class NewMainDB {
 
                 //Display values
                 //"10Chambre111,3,true,false,true,6"
-                String evenement = emplacement+","+idclient+","+ancienne_chute+","+chaiseRoualnte+","+fracture+","+deambulateur+","+idevent;
+                //String evenement = emplacement+","+idclient+","+ancienne_chute+","+chaiseRoualnte+","+fracture+","+deambulateur+","+idevent;
+                String evenement = emplacement+","+ancienne_chute+","+chaiseRoualnte+","+fracture+","+deambulateur+","+idevent;
                 System.out.println(evenement);
         			Sender.send(evenement, HOST, PORTS[RD.getValue()],"input");
         			Sender.send(evenement, HOST, PORTS[RD.getValue()],"input2");
